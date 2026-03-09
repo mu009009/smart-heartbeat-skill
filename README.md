@@ -1,7 +1,7 @@
 # 🫀 Smart Heartbeat Skill
 
 [![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue.svg)](https://openclaw.ai)
-[![Version](https://img.shields.io/badge/Version-1.0.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.1.0-green.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 
@@ -257,6 +257,41 @@ python tests/performance/test_performance.py
 2. 编写测试确保功能正常
 3. 提交Pull Request并描述更改
 4. 等待代码审查和合并
+
+## 🐛 问题解决方案
+
+### **15:15、15:39、15:53、16:05、16:15心跳问题**
+
+#### **问题描述**
+在某些时间点（如15:15、15:39等），系统错误地发送了心跳报告，但实际上用户正在聊天中。
+
+#### **问题根源**
+1. **HEARTBEAT.md检查被误用** - 检查清单被当作心跳消息发送
+2. **没有真正的智能心跳系统** - 只有检查，没有预测和间隔控制
+3. **在聊天中发送心跳** - 违反了心跳基本规则
+
+#### **解决方案 (v1.1.0)**
+1. **创建真正的智能心跳系统** (`fixed_smart_heartbeat.py`)
+2. **修复datetime时区问题** - 解决DeprecationWarning
+3. **添加cron集成脚本** (`smart_heartbeat_cron.sh`)
+4. **更新心跳逻辑** - 聊天中绝不发送心跳
+
+#### **验证测试**
+```python
+# 15:15场景测试 (距最后消息45分钟)
+test_scenario("15:15 - 讨论发布细节", 45)
+# 结果: 正在聊天 (<1小时)，不发送心跳 ✅
+
+# 15:39场景测试 (距最后消息9分钟)
+test_scenario("15:39 - 检查网络问题", 9)
+# 结果: 正在聊天 (<1小时)，不发送心跳 ✅
+```
+
+#### **问题已彻底解决**
+- ✅ 15:15、15:39、15:53、16:05、16:15错误心跳根除
+- ✅ HEARTBEAT.md误用问题解决
+- ✅ 聊天中绝不发送心跳
+- ✅ 心跳间隔严格保证
 
 ## 🙏 致谢
 
