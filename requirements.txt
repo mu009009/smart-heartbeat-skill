@@ -1,0 +1,21 @@
+# Smart Heartbeat Skill Requirements
+# Minimal dependencies - This is a lightweight skill
+
+# No external dependencies required for basic functionality
+# The skill uses only Python standard library
+
+# Optional dependencies for enhanced features
+# pytz==2024.1  # Timezone support (optional)
+# python-dateutil==2.8.2  # Advanced date parsing (optional)
+
+# Testing dependencies (dev only)
+pytest==7.4.4
+pytest-cov==4.1.0
+
+# Development dependencies
+black==24.1.1
+flake8==6.1.0
+isort==5.12.0
+
+# Note: The skill is designed to work with Python 3.8+ standard library only
+# All core functionality uses built-in modules
