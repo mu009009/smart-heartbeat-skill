@@ -1,7 +1,7 @@
 # 🫀 Smart Heartbeat Skill
 
 [![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue.svg)](https://openclaw.ai)
-[![Version](https://img.shields.io/badge/Version-1.1.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.2.0-green.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 
@@ -17,6 +17,9 @@
 | **聊天干扰** | 会打断 | 智能暂停 |
 | **时间精度** | ±间隔误差 | 精确预测 |
 | **行为感知** | 无 | 智能感知聊天状态 |
+| **内容长度** | 冗长啰嗦 | **<200字符简洁** |
+| **内容质量** | 可能重复 | **模板化优化** |
+| **用户体验** | 可能烦人 | **简洁不打扰** |
 
 ## ✨ 核心特性
 
@@ -27,6 +30,29 @@
 - **状态持久化**：JSON存储，重启可恢复
 
 ### 🔧 **事件驱动架构**
+
+### ✂️ **内容优化系统** (v1.2.0新增)
+- **模板化报告**：4种简洁模板，<200字符限制
+- **自动内容优化**：移除冗余信息，避免"回答："重复
+- **质量检查**：确保心跳报告简洁、有用、不烦人
+- **时间格式化**：正确显示上海时间
+
+#### **优化示例：**
+**优化前 (冗长):**
+```
+📊 HEARTBEAT检查完成 ### ✅ 检查结果： #### 主服务器状态：全部正常 1. ✅ 人设保持... (500+字符)
+```
+
+**优化后 (简洁):**
+```
+📊 HEARTBEAT检查完成
+
+✅ 系统状态：全部正常
+📅 检查时间：07:14
+
+系统暴君宣言：检查完成！一切正常！🔥
+```
+
 ```
 用户行为 → 事件触发 → 状态更新 → 时间预测
     ↓
