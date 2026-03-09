@@ -116,8 +116,8 @@ EOF
         return 1  # 需要发送心跳建立基准
     fi
     
-    # 检查最后心跳时间
-    local last_heartbeat=$(python3 -c "
+    # 检查最后用户消息时间（不是最后心跳时间！）
+    local last_user_message=$(python3 -c "
 import json
 import datetime
 import sys
@@ -126,12 +126,12 @@ try:
     with open('$state_file', 'r', encoding='utf-8') as f:
         state = json.load(f)
         
-    last_heartbeat_str = state.get('last_heartbeat')
-    if last_heartbeat_str:
-        if last_heartbeat_str.endswith('Z'):
-            last_heartbeat_str = last_heartbeat_str[:-1] + '+00:00'
-        last_heartbeat = datetime.datetime.fromisoformat(last_heartbeat_str)
-        print(last_heartbeat.isoformat())
+    last_message_str = state.get('last_user_message')
+    if last_message_str:
+        if last_message_str.endswith('Z'):
+            last_message_str = last_message_str[:-1] + '+00:00'
+        last_message = datetime.datetime.fromisoformat(last_message_str)
+        print(last_message.isoformat())
     else:
         print('')
         
@@ -139,26 +139,26 @@ except Exception as e:
     print('')
 ")
     
-    if [ -z "$last_heartbeat" ]; then
-        log "⚠️ 没有最后心跳记录"
-        return 1  # 需要发送心跳
+    if [ -z "$last_user_message" ]; then
+        log "⚠️ 没有用户消息记录"
+        return 1  # 需要发送心跳建立基准
     fi
     
-    # 计算距最后心跳的时间
+    # 计算距最后用户消息的时间
     local current_time=$(date -u +%s)
-    local heartbeat_time=$(date -u -d "$last_heartbeat" +%s 2>/dev/null || date -u -d "$(echo $last_heartbeat | sed 's/T/ /')" +%s)
-    local time_diff=$((current_time - heartbeat_time))
+    local message_time=$(date -u -d "$last_user_message" +%s 2>/dev/null || date -u -d "$(echo $last_user_message | sed 's/T/ /')" +%s)
+    local time_diff=$((current_time - message_time))
     
     # 获取当前应该使用的心跳间隔
     local required_interval=$(get_heartbeat_interval)
     
-    log "📊 最后心跳: $last_heartbeat"
-    log "📊 距上次心跳: ${time_diff}秒 ($((time_diff/60))分钟)"
+    log "📊 最后用户消息: $last_user_message"
+    log "📊 距上次消息: ${time_diff}秒 ($((time_diff/60))分钟)"
     log "📊 需要间隔: ${required_interval}秒 ($((required_interval/3600))小时)"
     
     # 如果已经超过所需间隔，需要发送心跳
     if [ $time_diff -ge $required_interval ]; then
-        log "✅ 需要发送心跳"
+        log "✅ 需要发送心跳 (消息间隔≥${required_interval}秒)"
         return 0
     else
         local remaining=$((required_interval - time_diff))
@@ -253,8 +253,10 @@ print('3小时' if 0 <= hour < 6 else '1小时')
     fi
     
     log "✅ 心跳报告已发送并记录"
+    exit 0  # 正常退出，发送报告
 else
     log "⏳ 无需发送心跳"
+    exit 1  # 无需发送心跳，退出状态码1
 fi
 
 log "=========================================="

@@ -154,10 +154,38 @@ Result: Conversation not interrupted
 
 ---
 
+### 🔧 **Critical Fixes (Final Debug)**
+During testing, we discovered and fixed critical issues:
+
+#### **Issue 1: Wrong Logic (13:46/13:51 reports)**
+- **Problem**: Script was checking `last_heartbeat` instead of `last_user_message`
+- **Symptom**: Wrong "正在聊天中" reports at 13:46 and 13:51
+- **Fix**: Changed to check `last_user_message` for decision making
+- **Result**: ✅ No more false reports during active chat
+
+#### **Issue 2: Timezone Comparison Error**
+- **Problem**: `TypeError: can't subtract offset-naive and offset-aware datetimes`
+- **Symptom**: Script crashes when comparing times with different timezone awareness
+- **Fix**: Normalize all times to naive (timezone-unaware) before comparison
+- **Result**: ✅ Stable time comparison across all scenarios
+
+#### **Issue 3: Unnecessary Debug Output**
+- **Problem**: Script printed "正在聊天中" reports during HEARTBEAT checks
+- **Symptom**: Users received reports that should have been silent
+- **Fix**: Implemented silent mode for HEARTBEAT integration
+- **Result**: ✅ Silent returns during active chat, proper reports only when needed
+
+#### **Final Verification**:
+- ✅ **Active chat (<1 hour)**: Silent `HEARTBEAT_OK`
+- ✅ **Idle time (≥1 hour)**: Heartbeat report sent
+- ✅ **Night mode (00:00-06:00)**: 3-hour intervals
+- ✅ **Day mode (06:00-24:00)**: 1-hour intervals
+- ✅ **No false reports**: 13:46/13:51 issue resolved
+
 **Feng Dan Declaration**: Zero tolerance for ineffective reminders! User behavior based, intelligent time prediction! Automatic pausing during chat, 90% resource reduction! 🔥
 
 **Version**: v1.0.0  
 **Release Date**: 2026-03-09  
-**Status**: ✅ Released  
+**Status**: ✅ **Released & Debugged**  
 **Maintainer**: 凤丹 (Feng Dan)  
 **License**: MIT License

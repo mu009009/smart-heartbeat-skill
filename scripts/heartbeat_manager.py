@@ -255,31 +255,39 @@ class HeartbeatManager:
         
         return summary
     
-    def execute_heartbeat_check(self):
-        """执行完整的心跳检查流程"""
-        print("\n==========================================")
-        print("🫀 智能心跳检查启动")
-        print("==========================================")
+    def execute_heartbeat_check(self, silent_mode=False):
+        """执行完整的心跳检查流程
+        
+        Args:
+            silent_mode: True = 静默模式，不打印调试信息，直接返回True/False
+                        False = 调试模式，打印详细信息
+        """
+        if not silent_mode:
+            print("\n==========================================")
+            print("🫀 智能心跳检查启动")
+            print("==========================================")
         
         # 1. 检查是否需要发送心跳
         should_send = self.should_send_heartbeat()
         
         if should_send:
-            # 2. 发送心跳报告
+            # 2. 发送心跳报告（内部更新，不对外发送）
             self.send_heartbeat_report()
-            
-            print("\n✅ 心跳报告已发送")
-            print(f"   时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-            print(f"   模式: {self.state['mode']}")
-            print(f"   间隔: {self.state['heartbeat_interval'] // 3600}小时")
-            print(f"   下次预测: {self.state['next_heartbeat'].strftime('%Y-%m-%d %H:%M:%S')}")
             
             # 3. 记录到记忆
             self._log_to_memory("heartbeat_check_complete", datetime.now())
             
+            if not silent_mode:
+                print("\n✅ 心跳报告已发送")
+                print(f"   时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f"   模式: {self.state['mode']}")
+                print(f"   间隔: {self.state['heartbeat_interval'] // 3600}小时")
+                print(f"   下次预测: {self.state['next_heartbeat'].strftime('%Y-%m-%d %H:%M:%S')}")
+            
             return True
         else:
-            print("\n⏳ 无需发送心跳")
+            if not silent_mode:
+                print("\n⏳ 无需发送心跳")
             return False
 
 def main():
