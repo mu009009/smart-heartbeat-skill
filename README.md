@@ -1,7 +1,7 @@
 # 🫀 Smart Heartbeat Skill
 
 [![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue.svg)](https://openclaw.ai)
-[![Version](https://img.shields.io/badge/Version-1.2.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.2.1-green.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 
@@ -36,6 +36,18 @@
 - **自动内容优化**：移除冗余信息，避免"回答："重复
 - **质量检查**：确保心跳报告简洁、有用、不烦人
 - **时间格式化**：正确显示上海时间
+
+### 🛡️ **智能发送控制** (v1.2.1新增)
+- **错误发送预防**：防止在聊天活跃时发送心跳
+- **AI助手集成**：智能判断集成到HEARTBEAT命令处理
+- **用户活动跟踪**：准确记录用户消息时间
+- **无缝体验**：心跳只在需要时发送，绝不干扰聊天
+
+#### **修复的问题：**
+> "好的，然后再检查下心跳的发送。这里又发出来了…… 即使已经知道不发送"
+
+#### **解决方案：**
+添加智能判断层，确保AI助手在收到HEARTBEAT命令时先咨询智能心跳系统，只在需要时发送报告。
 
 #### **优化示例：**
 **优化前 (冗长):**

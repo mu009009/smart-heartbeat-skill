@@ -2,6 +2,64 @@
 
 All notable changes to the Smart Heartbeat Skill will be documented in this file.
 
+## [v1.2.1] - 2026-03-10
+
+### 🛡️ **Smart Sending Control & Bug Fix**
+
+#### **Problem Solved: Heartbeat Sending During Active Chat**
+Fixed the critical issue where heartbeat reports were incorrectly sent even when the smart heartbeat system knew not to send them.
+
+#### **User Feedback Addressed:**
+> "好的，然后再检查下心跳的发送。这里又发出来了…… 即使已经知道不发送"
+
+#### **Root Cause Analysis:**
+1. **Missing integration layer** - AI assistant executed HEARTBEAT checks without consulting smart heartbeat system
+2. **Manual vs automatic mismatch** - Smart heartbeat system worked correctly for automatic checks, but manual HEARTBEAT commands bypassed it
+3. **No user activity tracking** - AI assistant didn't update user message times
+
+#### **Solutions Implemented:**
+
+##### 1. **Smart Sending Control**
+- ✅ `fix_heartbeat_sending.py` - Core sending decision logic
+- ✅ `smart_heartbeat_integration.py` - AI assistant integration module
+- ✅ **User activity tracking** - Updates when user sends messages
+- ✅ **Smart decision making** - Checks if should send before executing
+
+##### 2. **AI Assistant Integration**
+- ✅ **HEARTBEAT command processing** - Now consults smart heartbeat system
+- ✅ **User message time updates** - Tracks when user is active
+- ✅ **Proper response handling** - Returns `HEARTBEAT_OK` when no send needed
+- ✅ **Seamless integration** - Works with existing HEARTBEAT.md checks
+
+##### 3. **Error Prevention**
+- ✅ **Zero false sends** - Prevents heartbeat during active chat
+- ✅ **State consistency** - Ensures manual and automatic checks align
+- ✅ **User experience protection** - No unwanted interruptions
+- ✅ **System reliability** - Robust error handling
+
+#### **New Files Added:**
+- `fix_heartbeat_sending.py` - Smart sending decision logic
+- `smart_heartbeat_integration.py` - AI assistant integration
+- `docs/heartbeat_integration_guide.md` - Integration documentation
+
+#### **Integration Logic:**
+```python
+# AI assistant should now:
+1. On user message → update_user_message_time()
+2. On HEARTBEAT command → smart_heartbeat_check()
+3. If returns "HEARTBEAT_OK" → just reply HEARTBEAT_OK
+4. If returns True → execute concise check and send report
+```
+
+#### **Verification Tests:**
+```python
+# All scenarios test passed
+test_scenario("Active chat (<1 hour)", last_message=15)  # ✅ No heartbeat
+test_scenario("Idle (1 hour)", last_message=65)          # ✅ Send concise
+test_scenario("Nighttime idle (3 hours)", last_message=185) # ✅ Send concise
+test_scenario("Integration test", manual_check=True)     # ✅ Correct decision
+```
+
 ## [v1.2.0] - 2026-03-10
 
 ### ✂️ **Heartbeat Content Optimization & Template System**
