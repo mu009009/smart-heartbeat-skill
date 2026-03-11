@@ -1,0 +1,48 @@
+# Smart Reminder Skill Configuration
+# 智能提醒技能配置
+# 版本: 1.0.0
+# 更新时间: 2026-03-11
+
+# 提醒策略配置
+reminder_strategy:
+  # 基础提醒间隔（秒）
+  intervals:
+    daytime: 3600    # 白天：1小时 (06:00-00:00)
+    nighttime: 10800  # 深夜：3小时 (00:00-06:00)
+  
+  # 智能暂停机制
+  smart_pause:
+    active_chat_threshold: 3600  # 聊天活跃期：最后消息<1小时
+    reset_on_message: true       # 用户发送消息后重置计时器
+  
+  # 输出配置
+  output:
+    max_length: 200              # 最大字数限制
+    structure_template: |
+      📊 系统状态提醒
+      
+      ✅ 关键状态 (1-3条)
+      🔄 进行中任务 (如有)
+      📅 提醒时间
+      
+      简洁提醒，避免冗余！🔥
+
+# 状态检查项目
+check_items:
+  - name: OpenClaw服务状态
+    command: "systemctl --user status openclaw-gateway | grep -q 'active (running)' && echo '正常运行' || echo '服务异常'"
+    critical: true
+  
+  - name: 记忆系统状态
+    command: "ls -la memory/$(date +%Y-%m-%d).md 2>/dev/null && echo '今日记忆正常' || echo '记忆文件缺失'"
+    critical: false
+  
+  - name: API限流状态
+    command: "journalctl --user -u openclaw-gateway --since '5 minutes ago' | grep -c 'API rate limit'"
+    critical: true
+
+# 日志配置
+logging:
+  log_dir: "./logs"
+  max_log_files: 10
+  log_level: "INFO"
